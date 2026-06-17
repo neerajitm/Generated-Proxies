@@ -20,9 +20,17 @@
         </Response>
     </PostFlow>
     <HTTPProxyConnection>
-        <BasePath>/v1/conditional-order</BasePath>
+        <BasePath>/v1/customer-order</BasePath>
     </HTTPProxyConnection>
+    <RouteRule name="get-microservice-1">
+        <Condition>request.verb = "GET"</Condition>
+        <TargetEndpoint>microservice-1</TargetEndpoint>
+    </RouteRule>
+    <RouteRule name="post-microservice-2">
+        <Condition>request.verb = "POST"</Condition>
+        <TargetEndpoint>microservice-2</TargetEndpoint>
+    </RouteRule>
     <RouteRule name="default">
-        <TargetEndpoint>default</TargetEndpoint>
+        <TargetEndpoint>microservice-1</TargetEndpoint>
     </RouteRule>
 </ProxyEndpoint>

@@ -1,4 +1,4 @@
 <APIProxy name="customer-order-v1" revision="1">
     <ProxyEndpoints><ProxyEndpoint>default</ProxyEndpoint></ProxyEndpoints>
-    <TargetEndpoints><TargetEndpoint>default</TargetEndpoint></TargetEndpoints>
+    <TargetEndpoints><TargetEndpoint>microservice-1</TargetEndpoint><TargetEndpoint>microservice-2</TargetEndpoint></TargetEndpoints>
 </APIProxy>
