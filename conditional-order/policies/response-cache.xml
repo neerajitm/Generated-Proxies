@@ -1,0 +1,10 @@
+<ResponseCache name="response-cache">
+    <CacheKey>
+        <KeyFragment ref="request.uri"/>
+    </CacheKey>
+    <Scope>Exclusive</Scope>
+    <ExpirySettings>
+        <TimeoutInSeconds>1000</TimeoutInSeconds>
+    </ExpirySettings>
+    <ExcludeErrorResponse>true</ExcludeErrorResponse>
+</ResponseCache>
