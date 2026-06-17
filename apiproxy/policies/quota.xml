@@ -1,0 +1,6 @@
+<Quota name="quota">
+    <Allow count="200"/>
+    <Interval>1</Interval>
+    <TimeUnit>minute</TimeUnit>
+    <Distributed>true</Distributed>
+</Quota>
