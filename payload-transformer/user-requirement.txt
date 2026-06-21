@@ -1,0 +1,28 @@
+Generate an Apigee X API Proxy bundle following localized execution standards with no downstream target backend based on the following specific requirements:
+
+### 1. Gateway Proxy Details
+- **Proxy Name:** InternalPayloadTransformer
+- **Basepath:** /v1/utilities/transform
+
+### 2. Downstream Target Logic
+- **Default Target URL:** None  # Explicit Loopback Proxy Configuration
+- **Execution Target:** Local Proxy Response Only
+
+### 3. Policy & Governance Configurations
+Toggle the enterprise policies below by configuring their properties. 
+
+#### Localized Custom Logic (JavaScript)
+- **Enabled:** True
+- **Type:** JavaScript
+- **Properties:**
+  * Script_Source_File: transform_payload.js  # Reference to the local JS asset
+  * Execution_Time_Limit_MS: 2000
+  * Include_Source_In_Bundle: True
+
+#### Request Transformation & Tracking
+- **Enabled:** True
+- **Type:** AssignMessage
+- **Properties:**
+  * Execution_Flow: PostFlow.Response
+  * Set_Header_Name: Content-Type
+  * Set_Header_Value: application/json
