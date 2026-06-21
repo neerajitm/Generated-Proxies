@@ -1,0 +1,7 @@
+<JSONThreatProtection name="json-threat-protection">
+    <ArrayElementCount>100</ArrayElementCount>
+    <ContainerDepth>5</ContainerDepth>
+    <ObjectEntryCount>150</ObjectEntryCount>
+    <ObjectEntryNameLength>50</ObjectEntryNameLength>
+    <Source>request</Source>
+</JSONThreatProtection>

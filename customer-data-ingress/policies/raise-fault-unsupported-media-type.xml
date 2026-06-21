@@ -1,0 +1,10 @@
+<RaiseFault name="raise-fault-unsupported-media-type">
+    <FaultResponse>
+      <Set>
+        <StatusCode>415</StatusCode>
+        <ReasonPhrase>Unsupported Media Type</ReasonPhrase>
+        <Payload contentType="application/json">{"error": "Missing or invalid Content-Type"}</Payload>
+      </Set>
+    </FaultResponse>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

@@ -1,0 +1,10 @@
+<ResponseCache name="response-cache">
+    <CacheKey>
+        <KeyFragment ref="request.queryparam.region"/>
+    </CacheKey>
+    <Scope>Exclusive</Scope>
+    <ExpirySettings>
+        <TimeoutInSeconds>300</TimeoutInSeconds>
+    </ExpirySettings>
+    <ExcludeErrorResponse>true</ExcludeErrorResponse>
+</ResponseCache>

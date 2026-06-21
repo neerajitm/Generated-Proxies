@@ -1,0 +1,35 @@
+<ProxyEndpoint name="default">
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step><Name>raise-fault-unsupported-media-type</Name><Condition>request.header.Content-Type = ""</Condition></Step>
+            <Step><Name>json-threat-protection</Name></Step>
+            <Step><Name>xml-threat-protection</Name></Step>
+            <Step><Name>oauth-verify</Name></Step>
+            <Step><Name>spike-arrest</Name></Step>
+            <Step><Name>response-cache</Name><Condition>request.verb = "GET"</Condition></Step>
+        </Request>
+        <Response/>
+    </PreFlow>
+    <PostFlow name="PostFlow">
+        <Request>
+            <Step><Name>assign-correlation-id</Name></Step>
+        </Request>
+        <Response>
+            <Step><Name>response-cache</Name><Condition>request.verb = "GET"</Condition></Step>
+        </Response>
+    </PostFlow>
+    <HTTPProxyConnection>
+        <BasePath>/v2/customer-records</BasePath>
+    </HTTPProxyConnection>
+    <RouteRule name="post-ingress">
+        <Condition>request.verb = "POST"</Condition>
+        <TargetEndpoint>Target-Data-Ingress</TargetEndpoint>
+    </RouteRule>
+    <RouteRule name="get-query">
+        <Condition>request.verb = "GET"</Condition>
+        <TargetEndpoint>Target-Data-Query</TargetEndpoint>
+    </RouteRule>
+    <RouteRule name="default">
+        <TargetEndpoint>Target-Data-Query</TargetEndpoint>
+    </RouteRule>
+</ProxyEndpoint>

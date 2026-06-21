@@ -1,0 +1,9 @@
+<APIProxy name="CustomerDataIngressAPI" revision="1">
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <TargetEndpoints>
+        <TargetEndpoint>Target-Data-Ingress</TargetEndpoint>
+        <TargetEndpoint>Target-Data-Query</TargetEndpoint>
+    </TargetEndpoints>
+</APIProxy>

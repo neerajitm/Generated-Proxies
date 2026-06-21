@@ -1,0 +1,9 @@
+<XMLThreatProtection name="xml-threat-protection">
+    <NodeCount>100</NodeCount>
+    <AttributeCount>10</AttributeCount>
+    <AttributeNameLength>50</AttributeNameLength>
+    <AttributeValueLength>100</AttributeValueLength>
+    <ChildCount>10</ChildCount>
+    <NamespaceCount>10</NamespaceCount>
+    <Source>request</Source>
+</XMLThreatProtection>

@@ -1,0 +1,8 @@
+<AssignMessage name="assign-correlation-id">
+    <Set>
+      <Headers>
+        <Header name="X-Gateway-Correlation-ID">{client.received.start.timestamp}</Header>
+      </Headers>
+    </Set>
+    <AssignTo createNew="false" type="request"/>
+</AssignMessage>
