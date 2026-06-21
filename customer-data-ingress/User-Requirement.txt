@@ -1,0 +1,71 @@
+Generate an Apigee X API Proxy bundle following strict enterprise governance, payload firewalls, and token-based mediation standards based on the following specifications:
+
+### 1. Gateway Proxy Details
+- **Proxy Name:** CustomerDataIngressAPI
+- **Basepath:** /v2/customer-records
+
+### 2. Multi-Target Conditional Routing Logic
+- **Condition 1 (HTTP POST):** * Condition Expression: request.verb = "POST"
+  * Target Endpoint Name: Target-Data-Ingress
+  * Target Backend URL: https://api.internal.net/v2/records/upload
+- **Condition 2 (HTTP GET):** * Condition Expression: request.verb = "GET"
+  * Target Endpoint Name: Target-Data-Query
+  * Target Backend URL: https://api.internal.net/v2/records/search
+
+### 3. Policy & Governance Configurations
+Toggle the enterprise policies below by configuring their properties. If a property section is omitted or explicit properties are set to False, do not generate or execute that asset.
+
+#### Inbound JSON Firewall
+- **Enabled:** True
+- **Type:** JSONThreatProtection
+- **Properties:**
+  * Object_Entry_Name_Length_Limit: 50
+  * Object_Entry_Count_Limit: 150
+  * Array_Element_Count_Limit: 100
+  * Container_Depth_Limit: 5
+
+#### Inbound XML Firewall
+- **Enabled:** True
+- **Type:** XMLThreatProtection
+- **Properties:**
+  * Element_Name_Length_Limit: 50
+  * Attribute_Name_Length_Limit: 50
+  * Node_Depth_Limit: 4
+  * Attribute_Count_Per_Element_Limit: 10
+
+#### Token Security & Access Management
+- **Enabled:** True
+- **Type:** OAuthV2
+- **Properties:**
+  * Operation_Type: VerifyAccessToken
+  * Token_Location: request.header.Authorization
+
+#### Instantaneous Traffic Protection
+- **Enabled:** True
+- **Type:** SpikeArrest
+- **Properties:**
+  * Peak_Rate: 10ps
+
+#### Request Transformation & Tracking
+- **Enabled:** True
+- **Type:** AssignMessage
+- **Properties:**
+  * Execution_Flow: PostFlow.Request
+  * Set_Header_Name: X-Gateway-Correlation-ID
+  * Set_Header_Value: client.received.start.timestamp
+
+#### Performance Optimization (Edge Caching)
+- **Enabled:** True
+- **Type:** ResponseCache
+- **Properties:**
+  * Cache_Expiry_In_Seconds: 300
+  * Cache_Key_Identifier: request.queryparam.region
+
+#### Custom Exception Handling (Input Validation Guard)
+- **Enabled:** True
+- **Type:** RaiseFault
+- **Properties:**
+  * Condition_Expression: request.header.Content-Type = ""
+  * Response_Status_Code: 415
+  * Response_Reason_Phrase: Unsupported Media Type
+  * Error_Payload_Format: JSON
