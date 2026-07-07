@@ -1,0 +1,16 @@
+<ProxyEndpoint name="default">
+    <PreFlow name="PreFlow">
+        <Request/>
+        <Response/>
+    </PreFlow>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response>
+            <Step><Name>transform-payload-js</Name></Step>
+            <Step><Name>assign-content-type</Name></Step>
+        </Response>
+    </PostFlow>
+    <HTTPProxyConnection>
+        <BasePath>/v1/utilities/transform</BasePath>
+    </HTTPProxyConnection>
+</ProxyEndpoint>
