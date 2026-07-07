@@ -2,7 +2,7 @@
     <PreFlow name="PreFlow">
         <Request>
             <Step><Name>oauth-verify</Name></Step>
-            <Step><Name>assign-header-transform</Name></Step>
+            <Step><Name>assign-partner-header-mediation</Name></Step>
             <Step><Name>spike-arrest</Name></Step>
         </Request>
         <Response/>
@@ -14,7 +14,7 @@
     <HTTPProxyConnection>
         <BasePath>/v1/partner-ingress</BasePath>
     </HTTPProxyConnection>
-    <RouteRule name="route-premium-tier">
+    <RouteRule name="premium-partner">
         <Condition>request.header.X-Partner-Tier = "Premium"</Condition>
         <TargetEndpoint>Target-Enterprise-Cluster</TargetEndpoint>
     </RouteRule>

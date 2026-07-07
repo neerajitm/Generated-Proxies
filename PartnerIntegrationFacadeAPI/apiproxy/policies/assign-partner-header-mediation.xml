@@ -1,0 +1,14 @@
+<AssignMessage name="assign-partner-header-mediation">
+    <Remove>
+        <Headers>
+            <Header name="X-Internal-Token"/>
+            <Header name="Cookie"/>
+        </Headers>
+    </Remove>
+    <Set>
+        <Headers>
+            <Header name="X-Gateway-Timestamp">{system.timestamp}</Header>
+        </Headers>
+    </Set>
+    <AssignTo createNew="false" type="request"/>
+</AssignMessage>
