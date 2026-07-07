@@ -1,0 +1,24 @@
+<ProxyEndpoint name="default">
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step><Name>oauth-verify</Name></Step>
+            <Step><Name>assign-header-rewrite</Name></Step>
+            <Step><Name>spike-arrest</Name></Step>
+        </Request>
+        <Response/>
+    </PreFlow>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response/>
+    </PostFlow>
+    <HTTPProxyConnection>
+        <BasePath>/v1/partner-ingress</BasePath>
+    </HTTPProxyConnection>
+    <RouteRule name="premium-partner-routing">
+        <Condition>request.header.X-Partner-Tier = "Premium"</Condition>
+        <TargetEndpoint>Target-Enterprise-Cluster</TargetEndpoint>
+    </RouteRule>
+    <RouteRule name="default">
+        <TargetEndpoint>Target-Standard-Cluster</TargetEndpoint>
+    </RouteRule>
+</ProxyEndpoint>

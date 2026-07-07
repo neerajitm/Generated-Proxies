@@ -1,0 +1,9 @@
+<APIProxy name="PartnerIntegrationFacadeAPI" revision="1">
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <TargetEndpoints>
+        <TargetEndpoint>Target-Enterprise-Cluster</TargetEndpoint>
+        <TargetEndpoint>Target-Standard-Cluster</TargetEndpoint>
+    </TargetEndpoints>
+</APIProxy>

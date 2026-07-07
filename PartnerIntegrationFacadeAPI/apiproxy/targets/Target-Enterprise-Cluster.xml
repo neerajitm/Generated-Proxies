@@ -1,0 +1,13 @@
+<TargetEndpoint name="Target-Enterprise-Cluster">
+    <PreFlow name="PreFlow">
+        <Request/>
+        <Response/>
+    </PreFlow>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response/>
+    </PostFlow>
+    <HTTPTargetConnection>
+        <URL>https://premium-api.internal.net/v1/data</URL>
+    </HTTPTargetConnection>
+</TargetEndpoint>

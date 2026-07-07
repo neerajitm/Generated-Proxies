@@ -1,0 +1,3 @@
+<SpikeArrest name="spike-arrest">
+    <Rate>15ps</Rate>
+</SpikeArrest>
