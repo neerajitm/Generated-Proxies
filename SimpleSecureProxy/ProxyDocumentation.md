@@ -1,185 +1,145 @@
-```markdown
 # SimpleSecureProxy — Apigee X Proxy Documentation
 
 ## 1. Requirement Summary
 
-**Objective:**  
-Deploy a secure API proxy in Apigee X with:
-- API Key authentication for all requests.
-- Basic spike arrest protection.
-- Proxying all traffic to a mock target backend.
+**SimpleSecureProxy** is an API proxy designed to expose a secure HTTP endpoint at `/v1/secure-api`, protected by API key validation (received via query parameter) and rate-limited to 5 requests per second (spike arrest). The proxy forwards valid requests to a backend mock endpoint.
 
 ---
 
 ## 2. Proxy Details
 
-| **Name**               | SimpleSecureProxy                 |
-|------------------------|-----------------------------------|
-| **Version**            | 1.0                               |
-| **Base Path**          | `/v1/secure-api`                  |
-| **Description**        | A basic, secure Apigee X proxy with API key authentication and spike arrest applied to all incoming requests. |
+| Property         | Value                                   |
+|------------------|-----------------------------------------|
+| Name             | SimpleSecureProxy                       |
+| Version          | 1.0.0                                   |
+| Base Path        | /v1/secure-api                          |
+| Description      | Basic secure API with API key and spike arrest policies. |
 
 ---
 
 ## 3. Routing Rules
 
-- **Route Rule:**  
-  - **Name**: `default`
-  - **Condition**: None (all requests)
-  - **Target Endpoint:** `default` (as defined below)
+| Name    | Condition       | Target Endpoint |
+|---------|----------------|----------------|
+| default | *Always* (no condition) | default        |
+
+- All incoming requests matching `/v1/secure-api/*` are forwarded to the `default` target.
 
 ---
 
 ## 4. Target Endpoints
 
-- **Target Endpoint:** `default`
-  - **Target URL:** `https://mocktarget.apigee.net`
-  - All requests passing verification and spike arrest are forwarded here.
+| Name    | URL                               |
+|---------|-----------------------------------|
+| default | https://mocktarget.apigee.net     |
+
+The target endpoint simply forwards proxied requests to the above URL.
 
 ---
 
 ## 5. Policies
 
-### a) VerifyAPIKey (`verify-apikey`)
-- **Type:** Security
-- **Summary:** Ensures every request contains a valid API key.
-- **Configuration:**  
-  - **Reference:** `request.queryparam.apikey`
+### a. `verify-apikey` (VerifyAPIKey)
 
-<details>
-  <summary>XML</summary>
-
-  ```xml
-  <VerifyAPIKey name="verify-apikey">
-      <APIKey ref="request.queryparam.apikey"/>
-  </VerifyAPIKey>
-  ```
-</details>
-
----
-
-### b) SpikeArrest (`spike-arrest`)
-- **Type:** Traffic Management
-- **Summary:** Limits incoming traffic rate to prevent abuse.
+- **Type:** VerifyAPIKey
+- **Purpose:** Ensures the presence and validity of an API key in the `apikey` query parameter.
 - **Configuration:**
-  - **Rate:** `5ps` (5 requests per second)
+  - Extract API key from `request.queryparam.apikey`.
 
-<details>
-  <summary>XML</summary>
+### b. `spike-arrest` (SpikeArrest)
 
-  ```xml
-  <SpikeArrest name="spike-arrest">
-      <Rate>5ps</Rate>
-  </SpikeArrest>
-  ```
-</details>
+- **Type:** SpikeArrest
+- **Purpose:** Limits incoming request traffic to prevent backend overload.
+- **Configuration:**
+  - Rate: 5 requests per second (`5ps`).
+
+**Policy Attachment:**
+- Both policies are attached to the **PreFlow Request** of the proxy endpoint, meaning they apply to all incoming requests.
 
 ---
 
 ## 6. Generated Files
 
-| **Path**                          | **Type**             | **Purpose**                                 |
-|----------------------------------- |----------------------|---------------------------------------------|
-| apiproxy/SimpleSecureProxy.xml     | API Proxy Config     | Root descriptor for proxy + endpoints       |
-| apiproxy/proxies/default.xml       | Proxy Endpoint       | Defines proxy endpoint, flows, and routing  |
-| apiproxy/targets/default.xml       | Target Endpoint      | Defines backend target endpoint             |
-| apiproxy/policies/verify-apikey.xml| Policy               | Verifies API key in request                 |
-| apiproxy/policies/spike-arrest.xml | Policy               | Limits request rate                         |
+| File Path                              | Type             | Description                                      |
+|----------------------------------------|------------------|--------------------------------------------------|
+| apiproxy/SimpleSecureProxy.xml         | API Proxy        | Main API Proxy descriptor                        |
+| apiproxy/proxies/default.xml           | Proxy Endpoint   | Defines endpoint flows, routing, and base path    |
+| apiproxy/targets/default.xml           | Target Endpoint  | Outbound connection details                      |
+| apiproxy/policies/verify-apikey.xml    | Policy           | API Key validation logic                         |
+| apiproxy/policies/spike-arrest.xml     | Policy           | Spike arrest configuration                       |
 
 ---
 
 ## 7. Security Design
 
-- **Authentication**:  
-  - Implements API Key validation. Requests without a valid API key in the request query parameter `apikey` are rejected.
-- **Rate Limiting**:  
-  - Enforces a maximum of 5 requests/second per client/app (implementation depends on Apigee key configuration).
+- **API Key Required:** Every request must include a valid key in the `apikey` query parameter. Failure to provide or validate it will result in a 401 Unauthorized response.
+- **Traffic Throttling:** The `spike-arrest` policy restricts consumers to a maximum of 5 requests per second, offering basic protection against abuse and traffic spikes.
+- **Transport Security:** Target endpoint uses HTTPS, ensuring data privacy over the network.
 
 ---
 
 ## 8. Request Flow
 
-1. **Ingress:** Client makes a request to `/v1/secure-api`.
-2. **PreFlow (ProxyEndpoint)**:
-    - **Step 1:** `verify-apikey` policy checks for a valid API key in the query string.
-    - **Step 2:** `spike-arrest` policy applies rate limiting.
-3. **Routing:** If passes checks, the request is routed to the target endpoint.
-4. **TargetEndpoint (`default`):**  
-    - Forwards the request to `https://mocktarget.apigee.net`.
-5. **Egress:** Response forwarded back to client.
+1. **Incoming Request** (`/v1/secure-api`)
+    - ↓
+2. **PreFlow (Request):**
+    - a. **Policy:** `verify-apikey` (Validates API Key)
+    - b. **Policy:** `spike-arrest` (Applies rate limiting)
+    - ↓
+3. **Proxy Routing**
+    - Forwards request to target endpoint (`https://mocktarget.apigee.net`)
+    - ↓
+4. **Target Endpoint**
+    - Handles request and returns response
+    - ↓
+5. **PreFlow (Response):**
+    - No policies attached
+    - ↓
+6. **Client Receives Response**
 
 ---
 
 ## 9. Assumptions
 
-- API consumers will provide an `apikey` as a query parameter.
-- The Apigee environment has at least one valid API product and developer app with key provisioning configured.
-- No other methods of authentication will be used (e.g., OAuth, JWT).
-- Traffic rate limiting is sufficient at `5ps`; adjust as needed per usage.
-- No further path-based routing is required beyond the root base path.
+- Consumers are aware the API key must be provided as a query parameter (?apikey=...).
+- Backend does not require additional security policies (e.g., OAuth, JWT).
+- The API key verification uses Apigee's built-in mechanism, with keys registered in the Apigee developer/app database.
+- Backend (https://mocktarget.apigee.net) is always available and trusted for demo purposes.
+- There is no path or method-specific routing—ALL methods/paths on `/v1/secure-api` are handled identically.
 
 ---
 
 ## 10. Clarifications Required
 
-_(No explicit clarifications requested by client at this time.)_
-
-If needed, please clarify:
-- Should API keys also be accepted via header or other means?
-- Should error messages/responses be customized?
-- Should policies also apply to response flows?
-- Should routing support versioning or path-conditional logic?
+_N/A (no outstanding clarifications needed at this time, based on provided configuration)._
 
 ---
 
 ## 11. Deployment Structure
 
-**Directories & Files:**
-```
-apiproxy/
-├── SimpleSecureProxy.xml
-├── policies/
-│   ├── spike-arrest.xml
-│   └── verify-apikey.xml
-├── proxies/
-│   └── default.xml
-└── targets/
-    └── default.xml
-```
-**Deployment Steps:**
-- Import this directory as an Apigee API proxy.
-- Deploy to desired environment(s) (e.g., test, prod).
-- Ensure developer apps with valid API keys are registered.
+1. **Proxy Bundle Created** — Contains XML files as specified above.
+2. **Deployment Target** — Apigee X Environment (assumed to be pre-configured).
+3. **Installation/Deployment** — Standard Apigee deployment process: Import proxy; deploy to `test` / `prod` environment.
 
 ---
 
 ## 12. Testing Recommendations
 
-### Positive Tests
-- **Valid API key:**  
-  - Request to `/v1/secure-api?apikey=<valid_key>` → Should receive 200 response from target.
-- **Within rate limit:**  
-  - Up to 5 requests/second with valid key should succeed.
-
-### Negative Tests
-- **Missing/Invalid API key:**  
-  - Request to `/v1/secure-api` or with invalid key → Should receive 401 Unauthorized.
-- **Rate limit exceeded:**  
-  - >5 requests/second with same key → Should receive 429 "Spike Arrest violation".
-- **Malformed requests:**  
-  - Check error handling for bad/malformed requests.
-
-### Security
-- **Replay / Brute-force:**  
-  - Attempt rapid-fire with multiple API keys and observe protection.
-
-### Observability
-- **Logs:**  
-  - Ensure policy failures are logged appropriately.
-- **Stats:**  
-  - Monitor Apigee dashboard to verify spike arrest triggers as expected.
+- **API Key Enforcement:**
+  - Send requests with and without `apikey` parameter; expect 401 Unauthorized if absent/invalid.
+  - Test with valid API key expected to succeed.
+- **Spike Arrest:**
+  - Rapidly fire more than 5 requests per second; some should return `429 Too Many Requests`.
+- **Endpoint Reachability:**
+  - Confirm valid requests are forwarded to `https://mocktarget.apigee.net` and responses are relayed.
+- **HTTPS Outbound:** 
+  - Inspect that outbound traffic from Apigee to the backend is over HTTPS.
+- **Error Handling:**
+  - Validate appropriate error responses for all failure cases (missing API key, over limit, etc.).
+- **Rate Limiting:** 
+  - Test concurrency and rate limit boundaries for corner cases (e.g., 5 requests exactly, bursts, etc.).
 
 ---
 
-**END OF DOCUMENTATION**
-```
+**Document Version:** 2024-06  
+**Proxy Version:** 1.0.0

@@ -1,4 +1,8 @@
 <APIProxy name="SimpleSecureProxy" revision="1">
-    <ProxyEndpoints><ProxyEndpoint>default</ProxyEndpoint></ProxyEndpoints>
-    <TargetEndpoints><TargetEndpoint>default</TargetEndpoint></TargetEndpoints>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <TargetEndpoints>
+        <TargetEndpoint>default</TargetEndpoint>
+    </TargetEndpoints>
 </APIProxy>
