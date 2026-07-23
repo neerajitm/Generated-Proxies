@@ -11,7 +11,7 @@
         <Response/>
     </PostFlow>
     <HTTPProxyConnection>
-        <BasePath>/v1/apigee-secure-api</BasePath>
+        <BasePath>/v1/get-apigee-secure-api</BasePath>
     </HTTPProxyConnection>
     <RouteRule name="default">
         <TargetEndpoint>default</TargetEndpoint>
